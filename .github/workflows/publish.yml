@@ -10,20 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Push
     steps:
-      - name: git-checkout
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Install all dependencies
         run: npm install
 
-      - name: Build
-        run: npm run build # The build command of your project
+      - name: Build project
+        run: npm run build # Ensure this command generates the `dist` folder
 
-      - name: Push
-        uses: s0/git-publish-subdir-action@develop
+      - name: List dist directory
+        run: ls -al dist # Debug step to confirm directory contents
+
+      - name: Push to build branch
+        uses: s0/git-publish-subdir-action@v1.3.0
         env:
           REPO: self
           BRANCH: build # The branch name where you want to push the assets
-          FOLDER: build # The directory where your assets are generated
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub will automatically add this - you don't need to bother getting a token
+          FOLDER: dist # Update to use the correct folder
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MESSAGE: "Build: ({sha}) {msg}" # The commit message
